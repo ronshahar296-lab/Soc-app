@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SOC App V13 - Bilingual</title>
+    <title>SOC App V13 - Shared</title>
     
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230d1117'/%3E%3Cpath d='M256 48l-160 64v144c0 120 160 208 160 208s160-88 160-208V112L256 48z' fill='none' stroke='%232ea043' stroke-width='30'/%3E%3Ccircle cx='256' cy='220' r='60' fill='%232ea043' opacity='0.8'/%3E%3Cpath d='M256 220l80-80' stroke='%232ea043' stroke-width='20' stroke-linecap='round'/%3E%3C/svg%3E">
 
@@ -99,7 +99,7 @@
 
         .card {
             background: var(--card); border-radius: 8px; padding: 15px; margin-bottom: 15px;
-            border-inline-start: 4px solid var(--accent); /* תמיכה ב-LTR/RTL */
+            border-inline-start: 4px solid var(--accent);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
@@ -125,7 +125,6 @@
 </head>
 <body>
 
-    <!-- אייקונים -->
     <svg style="display: none;">
         <symbol id="icon-layer" viewBox="0 0 512 512"><path d="M448 304l-28-14-164 82-164-82-28 14 192 96 192-96zM32 144l192 96 28 14 28-14 192-96L256 48 32 144zm0 80l192 96 192-96-28-14-164 82-164-82-28 14z"/></symbol>
         <symbol id="icon-network" viewBox="0 0 640 512"><path d="M256 64H384v64H256V64zM240 0c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h48v32H176c-61.9 0-112 50.1-112 112v32H48c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48v-96c0-26.5-21.5-48-48-48h-16v-32c0-26.5 21.5-48 48-48h128c26.5 0 48 21.5 48 48v32h-16c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48v-96c0-26.5-21.5-48-48-48h-16v-32c0-61.9-50.1-112-112-112h-64v-32h48c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H240z"/></symbol>
@@ -160,7 +159,6 @@
 
         <button class="btn-toggle" onclick="toggleQuizMode()" id="quizBtn">הסתר תשובות</button>
 
-        <!-- הוספה ידנית -->
         <details class="add-box" id="addBox">
             <summary style="color: var(--accent); font-weight: bold; cursor: pointer;" id="lblAdd">➕ הוסף חומר חדש / ערוך</summary>
             
@@ -180,7 +178,6 @@
             <button class="btn-save" onclick="addNote()" id="btnSave">שמור כרטיסייה</button>
         </details>
 
-        <!-- אזור ייבוא חכם -->
         <details class="data-box">
             <summary style="color: #1f6feb; font-weight: bold; cursor: pointer;" id="lblSettings">⚙️ גיבוי וייבוא נתונים</summary>
             <textarea id="importArea" placeholder='JSON Code...' style="height:80px; font-family:monospace; color:#8be9fd;"></textarea>
@@ -199,73 +196,31 @@
     </div>
 
     <script>
-        // תרגומים
         const LANG = {
-            he: {
-                dir: "rtl",
-                flag: "🇮🇱",
-                appTitle: "SOC App V13",
-                quizHide: "הסתר תשובות",
-                quizShow: "הצג תשובות",
-                addTitle: "➕ הוסף חומר חדש / ערוך",
-                selectFolder: "בחר תיקייה:",
-                placeholderTitle: "כותרת",
-                placeholderText: "כתוב כאן או לחץ על המיקרופון...",
-                dictate: "הכתב טקסט",
-                recording: "מקליט... דבר עכשיו",
-                save: "שמור כרטיסייה",
-                settings: "⚙️ גיבוי וייבוא נתונים",
-                import: "📥 ייבוא",
-                export: "📤 ייצוא",
-                deleteAll: "🗑️ מחק הכל",
-                search: "🔍 חפש...",
-                btnSpeak: "הקרא",
-                btnEdit: "ערוך",
-                btnDel: "מחק",
-                confirmDel: "למחוק את הכרטיסייה?",
-                confirmDelAll: "למחוק הכל? לא ניתן לשחזר.",
-                alertSave: "חסרה כותרת!",
-                alertCopied: "הועתק ללוח!",
-                alertImport: "בוצע!",
-                folders: { "הכל": "הכל", "רשתות": "רשתות", "מערכות הפעלה": "מערכות הפעלה", "הגנה ותקיפה": "הגנה ותקיפה", "כלים": "כלים", "כללי": "כללי" }
-            },
-            en: {
-                dir: "ltr",
-                flag: "🇺🇸",
-                appTitle: "SOC App V13",
-                quizHide: "Hide Answers",
-                quizShow: "Show Answers",
-                addTitle: "➕ Add New Content / Edit",
-                selectFolder: "Select Folder:",
-                placeholderTitle: "Title",
-                placeholderText: "Type here or click mic to dictate...",
-                dictate: "Dictate",
-                recording: "Recording... Speak now",
-                save: "Save Card",
-                settings: "⚙️ Backup & Import",
-                import: "📥 Import",
-                export: "📤 Export",
-                deleteAll: "🗑️ Delete All",
-                search: "🔍 Search...",
-                btnSpeak: "Speak",
-                btnEdit: "Edit",
-                btnDel: "Delete",
-                confirmDel: "Delete this card?",
-                confirmDelAll: "Delete all? Cannot be undone.",
-                alertSave: "Title missing!",
-                alertCopied: "Copied to clipboard!",
-                alertImport: "Done!",
-                folders: { "הכל": "All", "רשתות": "Network", "מערכות הפעלה": "OS / Linux", "הגנה ותקיפה": "Security", "כלים": "Tools", "כללי": "General" }
-            }
+            he: { dir: "rtl", flag: "🇮🇱", appTitle: "SOC App V13", quizHide: "הסתר תשובות", quizShow: "הצג תשובות", addTitle: "➕ הוסף חומר חדש / ערוך", selectFolder: "בחר תיקייה:", placeholderTitle: "כותרת", placeholderText: "כתוב כאן או לחץ על המיקרופון...", dictate: "הכתב טקסט", recording: "מקליט... דבר עכשיו", save: "שמור כרטיסייה", settings: "⚙️ גיבוי וייבוא נתונים", import: "📥 ייבוא", export: "📤 ייצוא", deleteAll: "🗑️ מחק הכל", search: "🔍 חפש...", btnSpeak: "הקרא", btnEdit: "ערוך", btnDel: "מחק", confirmDel: "למחוק את הכרטיסייה?", confirmDelAll: "למחוק הכל? לא ניתן לשחזר.", alertSave: "חסרה כותרת!", alertCopied: "הועתק ללוח!", alertImport: "בוצע!", folders: { "הכל": "הכל", "רשתות": "רשתות", "מערכות הפעלה": "מערכות הפעלה", "הגנה ותקיפה": "הגנה ותקיפה", "כלים": "כלים", "כללי": "כללי" } },
+            en: { dir: "ltr", flag: "🇺🇸", appTitle: "SOC App V13", quizHide: "Hide Answers", quizShow: "Show Answers", addTitle: "➕ Add New Content / Edit", selectFolder: "Select Folder:", placeholderTitle: "Title", placeholderText: "Type here or click mic to dictate...", dictate: "Dictate", recording: "Recording... Speak now", save: "Save Card", settings: "⚙️ Backup & Import", import: "📥 Import", export: "📤 Export", deleteAll: "🗑️ Delete All", search: "🔍 Search...", btnSpeak: "Speak", btnEdit: "Edit", btnDel: "Delete", confirmDel: "Delete this card?", confirmDelAll: "Delete all? Cannot be undone.", alertSave: "Title missing!", alertCopied: "Copied to clipboard!", alertImport: "Done!", folders: { "הכל": "All", "רשתות": "Network", "מערכות הפעלה": "OS / Linux", "הגנה ותקיפה": "Security", "כלים": "Tools", "כללי": "General" } }
         };
 
         const ICONS_MAP = { "הכל": "#icon-layer", "רשתות": "#icon-network", "מערכות הפעלה": "#icon-linux", "הגנה ותקיפה": "#icon-shield", "כלים": "#icon-tools", "כללי": "#icon-list" };
         const FOLDER_KEYS = ["הכל", "רשתות", "מערכות הפעלה", "הגנה ותקיפה", "כלים", "כללי"];
         
-        let currentLang = 'he'; // ברירת מחדל
+        let currentLang = 'he';
         let currentFolder = "הכל";
         let quizMode = false;
-        let notes = JSON.parse(localStorage.getItem('soc_offline_v9')) || [];
+
+        // ========================================================
+        //   כאן מדביקים את הקוד מהייצוא (בין הסוגריים המרובעים)
+        // ========================================================
+        const MY_SHARED_NOTES = []; 
+        // ========================================================
+
+
+        // טעינת נתונים: אם אין למשתמש נתונים בזיכרון, טען את הנתונים שלך
+        let notes = JSON.parse(localStorage.getItem('soc_offline_v9'));
+        
+        if (!notes || notes.length === 0) {
+            notes = MY_SHARED_NOTES;
+        }
 
         document.addEventListener('DOMContentLoaded', () => { 
             updateInterface();
@@ -300,7 +255,6 @@
             document.getElementById('btnDeleteAll').innerText = T.deleteAll;
             document.getElementById('searchInput').placeholder = T.search;
 
-            // עדכון רשימת תיקיות (בחלונית הוספה ובתפריט עליון)
             updateFolderNav();
             updateFolderSelect();
         }
@@ -309,12 +263,10 @@
             const nav = document.getElementById('folderNav');
             nav.innerHTML = "";
             const T = LANG[currentLang];
-            
             FOLDER_KEYS.forEach(key => {
                 const btn = document.createElement('div');
                 btn.className = `folder-tab ${key === currentFolder ? 'active' : ''}`;
                 const iconId = ICONS_MAP[key] || "#icon-list";
-                // מציג את השם המתורגם, אבל הלוגיקה משתמשת ב-key המקורי
                 btn.innerHTML = `<svg class="icon"><use href="${iconId}"></use></svg> ${T.folders[key]}`;
                 btn.onclick = () => {
                     currentFolder = key;
@@ -331,62 +283,43 @@
             const savedValue = select.value;
             select.innerHTML = "";
             const T = LANG[currentLang];
-            
             FOLDER_KEYS.forEach(key => {
                 if(key === "הכל") return;
                 const opt = document.createElement('option');
-                opt.value = key; // שומרים את הערך המקורי (עברית) כדי לא לשבור נתונים ישנים
+                opt.value = key;
                 opt.innerText = T.folders[key];
                 select.appendChild(opt);
             });
             if(savedValue) select.value = savedValue;
         }
 
-        // --- דיבור לטקסט ---
         function startDictation() {
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 const recognition = new SpeechRecognition();
-                
-                // בחירת שפה לפי המצב הנוכחי
                 recognition.lang = currentLang === 'he' ? 'he-IL' : 'en-US';
                 recognition.continuous = false;
                 recognition.interimResults = false;
-
                 const btn = document.getElementById('recBtn');
                 const status = document.getElementById('recStatus');
                 const T = LANG[currentLang];
 
-                recognition.onstart = function() {
-                    btn.classList.add('recording');
-                    status.innerText = T.recording;
-                    status.style.display = 'block';
-                };
-
+                recognition.onstart = function() { btn.classList.add('recording'); status.innerText = T.recording; status.style.display = 'block'; };
                 recognition.onresult = function(event) {
                     const transcript = event.results[0][0].transcript;
                     const textArea = document.getElementById('textIn');
                     textArea.value += (textArea.value ? " " : "") + transcript;
                 };
-
                 recognition.onerror = function() { stopRec(); };
                 recognition.onend = function() { stopRec(); };
                 recognition.start();
-
-                function stopRec() {
-                    btn.classList.remove('recording');
-                    status.style.display = 'none';
-                }
-            } else {
-                alert("Browser not supported.");
-            }
+                function stopRec() { btn.classList.remove('recording'); status.style.display = 'none'; }
+            } else { alert("Browser not supported."); }
         }
 
-        // --- הקראת טקסט ---
         function speakText(text) {
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
-            // בחירת שפה להקראה
             utterance.lang = currentLang === 'he' ? 'he-IL' : 'en-US';
             window.speechSynthesis.speak(utterance);
         }
@@ -409,27 +342,18 @@
         function editNote(id) {
             const note = notes.find(n => n.id === id);
             if (!note) return;
-            
             document.getElementById('folderSelect').value = note.folder;
             document.getElementById('titleIn').value = note.title;
             document.getElementById('textIn').value = note.text;
-            
-            notes = notes.filter(n => n.id !== id); // מחיקה זמנית
+            notes = notes.filter(n => n.id !== id);
             save();
             renderNotes();
             document.getElementById('addBox').setAttribute('open', 'true');
             document.getElementById('addBox').scrollIntoView({behavior: "smooth"});
         }
 
-        function deleteNote(id) { 
-            if (confirm(LANG[currentLang].confirmDel)) { 
-                notes = notes.filter(n => n.id !== id); save(); renderNotes(); 
-            } 
-        }
-        
-        function clearAll() { 
-            if(confirm(LANG[currentLang].confirmDelAll)) { notes = []; save(); renderNotes(); } 
-        }
+        function deleteNote(id) { if (confirm(LANG[currentLang].confirmDel)) { notes = notes.filter(n => n.id !== id); save(); renderNotes(); } }
+        function clearAll() { if(confirm(LANG[currentLang].confirmDelAll)) { notes = []; save(); renderNotes(); } }
 
         function exportData() { navigator.clipboard.writeText(JSON.stringify(notes)); alert(LANG[currentLang].alertCopied); }
         function importData() {
@@ -443,7 +367,7 @@
 
         function toggleQuizMode() {
             quizMode = !quizMode;
-            updateInterface(); // עדכון טקסט הכפתור
+            updateInterface();
             renderNotes();
         }
 
@@ -461,12 +385,9 @@
                 card.className = "card";
                 const contentClass = quizMode ? "content hidden-answer" : "content";
                 const iconId = ICONS_MAP[note.folder] || "#icon-list";
-                
                 const safeTitle = esc(note.title);
                 const safeText = esc(note.text);
                 const speakableText = safeText.replace(/"/g, "'").replace(/\n/g, " ");
-                
-                // שם התיקייה לתצוגה (מתורגם)
                 const folderDisplay = T.folders[note.folder] || note.folder;
 
                 card.innerHTML = `
@@ -476,27 +397,16 @@
                             <span class="card-meta"><svg class="icon"><use href="${iconId}"></use></svg> ${folderDisplay}</span>
                         </div>
                     </div>
-                    
-                    <div class="${contentClass}" onclick="if(quizMode) this.classList.remove('hidden-answer')" dir="auto">
-                        ${safeText}
-                    </div>
-                    
+                    <div class="${contentClass}" onclick="if(quizMode) this.classList.remove('hidden-answer')" dir="auto">${safeText}</div>
                     <div class="card-actions">
-                        <button class="action-btn btn-speak" onclick="speakText('${speakableText}')">
-                            <svg class="icon"><use href="#icon-speak"></use></svg> ${T.btnSpeak}
-                        </button>
-                        <button class="action-btn btn-edit" onclick="editNote(${note.id})">
-                            <svg class="icon"><use href="#icon-edit"></use></svg> ${T.btnEdit}
-                        </button>
-                        <button class="action-btn btn-del" onclick="deleteNote(${note.id})">
-                            ${T.btnDel}
-                        </button>
+                        <button class="action-btn btn-speak" onclick="speakText('${speakableText}')"><svg class="icon"><use href="#icon-speak"></use></svg> ${T.btnSpeak}</button>
+                        <button class="action-btn btn-edit" onclick="editNote(${note.id})"><svg class="icon"><use href="#icon-edit"></use></svg> ${T.btnEdit}</button>
+                        <button class="action-btn btn-del" onclick="deleteNote(${note.id})">${T.btnDel}</button>
                     </div>
                 `;
                 list.appendChild(card);
             });
         }
-        
         function esc(str) { return str ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : ""; }
     </script>
 </body>
