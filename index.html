@@ -1,1 +1,503 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOC App V13 - Bilingual</title>
+    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230d1117'/%3E%3Cpath d='M256 48l-160 64v144c0 120 160 208 160 208s160-88 160-208V112L256 48z' fill='none' stroke='%232ea043' stroke-width='30'/%3E%3Ccircle cx='256' cy='220' r='60' fill='%232ea043' opacity='0.8'/%3E%3Cpath d='M256 220l80-80' stroke='%232ea043' stroke-width='20' stroke-linecap='round'/%3E%3C/svg%3E">
 
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --text: #c9d1d9;
+            --accent: #2ea043;
+            --folder-bg: #21262d;
+            --active-tab: #2ea043;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px;
+            transition: direction 0.3s;
+        }
+
+        .icon { width: 1em; height: 1em; fill: currentColor; vertical-align: middle; display: inline-block; }
+
+        .header-container {
+            position: sticky;
+            top: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 5px;
+        }
+
+        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .app-logo { width: 32px; height: 32px; }
+        h2 { margin: 0; color: var(--accent); font-size: 20px; letter-spacing: 1px; text-transform: uppercase; }
+
+        .lang-btn {
+            background: none; border: 1px solid #30363d; color: white; cursor: pointer;
+            font-size: 18px; padding: 5px 10px; border-radius: 8px; transition: 0.2s;
+        }
+        .lang-btn:hover { background: #30363d; }
+
+        .folder-nav { display: flex; overflow-x: auto; gap: 12px; padding: 5px 15px 10px 15px; scrollbar-width: none; }
+        .folder-nav::-webkit-scrollbar { display: none; }
+
+        .folder-tab {
+            white-space: nowrap; background: var(--folder-bg); padding: 8px 16px; border-radius: 50px;
+            border: 1px solid #30363d; font-size: 13px; color: #8b949e; transition: 0.3s;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+        }
+        .folder-tab.active { background: var(--active-tab); color: #ffffff; border-color: var(--active-tab); font-weight: bold; }
+
+        .container { padding: 15px; }
+
+        .hero-banner {
+            width: 100%; height: 100px; background-color: #000;
+            background-image: linear-gradient(rgba(46, 160, 67, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(46, 160, 67, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #30363d;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .hero-banner::after { content: 'SYSTEM ONLINE'; color: var(--accent); font-family: monospace; font-size: 1.2rem; letter-spacing: 2px; text-shadow: 0 0 10px var(--accent); }
+
+        .add-box, .data-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid #30363d; margin-bottom: 20px; }
+
+        input, textarea, select {
+            width: 100%; padding: 12px; margin-top: 8px; background: #0d1117;
+            border: 1px solid #30363d; color: white; border-radius: 6px; box-sizing: border-box; font-size: 16px; font-family: inherit;
+        }
+        
+        button {
+            width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; margin-top: 15px;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-save { background: var(--accent); color: white; }
+        .btn-toggle { background: #21262d; color: var(--accent); border: 1px solid var(--accent); margin-bottom: 15px; }
+        .btn-import { background: #1f6feb; color: white; }
+        
+        .btn-dictate {
+            background: #d32f2f; color: white; width: auto; display: inline-flex;
+            margin-top: 5px; padding: 8px 15px; font-size: 14px;
+        }
+        .btn-dictate.recording { animation: pulse 1.5s infinite; background: #ff0000; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+
+        .card {
+            background: var(--card); border-radius: 8px; padding: 15px; margin-bottom: 15px;
+            border-inline-start: 4px solid var(--accent); /* תמיכה ב-LTR/RTL */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-title { font-size: 18px; font-weight: bold; color: white; margin-bottom: 5px; }
+        .card-meta { font-size: 11px; color: #8b949e; background: #21262d; padding: 3px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; }
+        
+        .content { margin-top: 10px; line-height: 1.6; font-size: 15px; color: #c9d1d9; white-space: pre-wrap; }
+        .hidden-answer { filter: blur(6px); user-select: none; cursor: pointer; transition: 0.3s; opacity: 0.7; }
+        .hidden-answer:active { filter: blur(0); opacity: 1; }
+
+        .card-actions {
+            display: flex; justify-content: space-between; margin-top: 15px;
+            border-top: 1px solid #30363d; padding-top: 10px;
+        }
+
+        .action-btn { background: none; border: none; font-size: 14px; cursor: pointer; padding: 5px 10px; margin: 0; width: auto; display: inline-flex; }
+        .btn-del { color: #ff5555; }
+        .btn-edit { color: #e3b341; }
+        .btn-speak { color: #58a6ff; }
+        .action-btn:hover { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <!-- אייקונים -->
+    <svg style="display: none;">
+        <symbol id="icon-layer" viewBox="0 0 512 512"><path d="M448 304l-28-14-164 82-164-82-28 14 192 96 192-96zM32 144l192 96 28 14 28-14 192-96L256 48 32 144zm0 80l192 96 192-96-28-14-164 82-164-82-28 14z"/></symbol>
+        <symbol id="icon-network" viewBox="0 0 640 512"><path d="M256 64H384v64H256V64zM240 0c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h48v32H176c-61.9 0-112 50.1-112 112v32H48c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48v-96c0-26.5-21.5-48-48-48h-16v-32c0-26.5 21.5-48 48-48h128c26.5 0 48 21.5 48 48v32h-16c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48v-96c0-26.5-21.5-48-48-48h-16v-32c0-61.9-50.1-112-112-112h-64v-32h48c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H240z"/></symbol>
+        <symbol id="icon-linux" viewBox="0 0 448 512"><path d="M379.6 280c4.9-10.3 8.4-21 8.4-32 0-35.3-28.7-64-64-64-5.5 0-10.7 .7-15.7 1.9-20.9-46.1-66.2-77.9-119.3-77.9-52.9 0-98.3 31.7-119.3 77.6-5 1.2-10.2 1.9-15.7 1.9-35.3 0-64 28.7-64 64 0 11.2 3.6 21.7 8.4 32.3-17.7 20-28.4 46.5-28.4 75.7 0 61.9 50.1 112 112 112h192c61.9 0 112-50.1 112-112 0-29.2-10.7-55.7-28.4-75.6zM152 272c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm144 0c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24z"/></symbol>
+        <symbol id="icon-shield" viewBox="0 0 512 512"><path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 366.6-15.8 7.9-34.9 7.9-50.7 0C59.4 420.7 18.6 239.2 18.1 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0z"/></symbol>
+        <symbol id="icon-tools" viewBox="0 0 512 512"><path d="M260.4 89.2c-17.7 17.5-17.9 45.8-.4 63.5l14.9 14.9-58.6 58.6-14.9-14.9c-17.6-17.6-46.1-17.4-63.5 .4L105.8 244c-17.5 17.7-17.3 46 .4 63.5l30.8 30.7L12.5 462.6c-11.2 11.2-16.1 27.6-12.8 43.1s14.4 28 29.8 31.4c15.6 3.3 31.9-1.6 43.1-12.8l124.4-124.4 30.7 30.8c17.6 17.6 46 17.8 63.5 .4l32.2-32.2c17.7-17.5 17.9-45.8 .4-63.5l-14.9-14.9 58.6-58.6 14.9 14.9c17.6 17.6 46.1 17.4 63.5-.4l32.2-32.2c17.5-17.7 17.3-46-.4-63.5L260.4 89.2z"/></symbol>
+        <symbol id="icon-list" viewBox="0 0 384 512"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></symbol>
+        <symbol id="icon-mic" viewBox="0 0 384 512"><path d="M192 0C139 0 96 43 96 96V256c0 53 43 96 96 96s96-43 96-96V96c0-53-43-96-96-96zM64 216c0-13.3-10.7-24-24-24s-24 10.7-24 24C16 338.8 107.4 440.8 229.2 447.4c47.6 2.5 86.8-35.4 86.8-82.9V32c0-17.7 14.3-32 32-32s32 14.3 32 32V364.5c0 82.2-61.9 150.7-142.3 159.2C108.6 537.1 0 457.7 0 364.5V216z"/></symbol>
+        <symbol id="icon-speak" viewBox="0 0 640 512"><path d="M533.6 32.5C598.5 85.3 640 165.8 640 256s-41.5 170.8-106.4 223.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C557.5 398.2 592 331.2 592 256s-34.5-142.2-88.7-186.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C396 282.1 400 269.9 400 256s-4-26.1-17.8-37.2c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"/></symbol>
+        <symbol id="icon-edit" viewBox="0 0 512 512"><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.8 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/></symbol>
+    </svg>
+
+    <div class="header-container">
+        <div class="app-header">
+            <div class="logo-area">
+                <svg class="app-logo" viewBox="0 0 512 512">
+                    <rect width="512" height="512" rx="100" fill="#0d1117"/>
+                    <path d="M256 48l-160 64v144c0 120 160 208 160 208s160-88 160-208V112L256 48z" fill="none" stroke="#2ea043" stroke-width="30"/>
+                    <circle cx="256" cy="220" r="60" fill="#2ea043" opacity="0.8"/>
+                    <path d="M256 220l80-80" stroke="#2ea043" stroke-width="20" stroke-linecap="round"/>
+                </svg>
+                <h2>SOC V13</h2>
+            </div>
+            <button class="lang-btn" onclick="toggleLang()" id="langBtn">🇮🇱</button>
+        </div>
+        
+        <div class="folder-nav" id="folderNav"></div>
+    </div>
+
+    <div class="container">
+        <div class="hero-banner"></div>
+
+        <button class="btn-toggle" onclick="toggleQuizMode()" id="quizBtn">הסתר תשובות</button>
+
+        <!-- הוספה ידנית -->
+        <details class="add-box" id="addBox">
+            <summary style="color: var(--accent); font-weight: bold; cursor: pointer;" id="lblAdd">➕ הוסף חומר חדש / ערוך</summary>
+            
+            <label style="display:block; margin-top:10px; font-size:12px; color:#8b949e;" id="lblSelectFolder">בחר תיקייה:</label>
+            <select id="folderSelect"></select>
+
+            <input type="text" id="titleIn" placeholder="כותרת" dir="auto">
+            
+            <div style="position: relative;">
+                <textarea id="textIn" placeholder="..." style="height:120px;" dir="auto"></textarea>
+                <button class="btn-dictate" onclick="startDictation()" id="recBtn">
+                    <svg class="icon"><use href="#icon-mic"></use></svg> <span id="lblDictate">הכתב טקסט</span>
+                </button>
+            </div>
+            <p id="recStatus" style="font-size:12px; color:#aaa; display:none;">Recording...</p>
+
+            <button class="btn-save" onclick="addNote()" id="btnSave">שמור כרטיסייה</button>
+        </details>
+
+        <!-- אזור ייבוא חכם -->
+        <details class="data-box">
+            <summary style="color: #1f6feb; font-weight: bold; cursor: pointer;" id="lblSettings">⚙️ גיבוי וייבוא נתונים</summary>
+            <textarea id="importArea" placeholder='JSON Code...' style="height:80px; font-family:monospace; color:#8be9fd;"></textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-import" onclick="importData()" id="btnImport">📥 ייבוא</button>
+                <button class="btn-toggle" onclick="exportData()" id="btnExport">📤 ייצוא</button>
+            </div>
+            <button onclick="clearAll()" style="background:#8b0000; margin-top:10px;" id="btnDeleteAll">🗑️ מחק הכל</button>
+        </details>
+
+        <div style="padding: 0 5px;">
+            <input type="text" id="searchInput" placeholder="🔍..." onkeyup="renderNotes()" dir="auto">
+        </div>
+
+        <div id="notesList" style="margin-top:15px;"></div>
+    </div>
+
+    <script>
+        // תרגומים
+        const LANG = {
+            he: {
+                dir: "rtl",
+                flag: "🇮🇱",
+                appTitle: "SOC App V13",
+                quizHide: "הסתר תשובות",
+                quizShow: "הצג תשובות",
+                addTitle: "➕ הוסף חומר חדש / ערוך",
+                selectFolder: "בחר תיקייה:",
+                placeholderTitle: "כותרת",
+                placeholderText: "כתוב כאן או לחץ על המיקרופון...",
+                dictate: "הכתב טקסט",
+                recording: "מקליט... דבר עכשיו",
+                save: "שמור כרטיסייה",
+                settings: "⚙️ גיבוי וייבוא נתונים",
+                import: "📥 ייבוא",
+                export: "📤 ייצוא",
+                deleteAll: "🗑️ מחק הכל",
+                search: "🔍 חפש...",
+                btnSpeak: "הקרא",
+                btnEdit: "ערוך",
+                btnDel: "מחק",
+                confirmDel: "למחוק את הכרטיסייה?",
+                confirmDelAll: "למחוק הכל? לא ניתן לשחזר.",
+                alertSave: "חסרה כותרת!",
+                alertCopied: "הועתק ללוח!",
+                alertImport: "בוצע!",
+                folders: { "הכל": "הכל", "רשתות": "רשתות", "מערכות הפעלה": "מערכות הפעלה", "הגנה ותקיפה": "הגנה ותקיפה", "כלים": "כלים", "כללי": "כללי" }
+            },
+            en: {
+                dir: "ltr",
+                flag: "🇺🇸",
+                appTitle: "SOC App V13",
+                quizHide: "Hide Answers",
+                quizShow: "Show Answers",
+                addTitle: "➕ Add New Content / Edit",
+                selectFolder: "Select Folder:",
+                placeholderTitle: "Title",
+                placeholderText: "Type here or click mic to dictate...",
+                dictate: "Dictate",
+                recording: "Recording... Speak now",
+                save: "Save Card",
+                settings: "⚙️ Backup & Import",
+                import: "📥 Import",
+                export: "📤 Export",
+                deleteAll: "🗑️ Delete All",
+                search: "🔍 Search...",
+                btnSpeak: "Speak",
+                btnEdit: "Edit",
+                btnDel: "Delete",
+                confirmDel: "Delete this card?",
+                confirmDelAll: "Delete all? Cannot be undone.",
+                alertSave: "Title missing!",
+                alertCopied: "Copied to clipboard!",
+                alertImport: "Done!",
+                folders: { "הכל": "All", "רשתות": "Network", "מערכות הפעלה": "OS / Linux", "הגנה ותקיפה": "Security", "כלים": "Tools", "כללי": "General" }
+            }
+        };
+
+        const ICONS_MAP = { "הכל": "#icon-layer", "רשתות": "#icon-network", "מערכות הפעלה": "#icon-linux", "הגנה ותקיפה": "#icon-shield", "כלים": "#icon-tools", "כללי": "#icon-list" };
+        const FOLDER_KEYS = ["הכל", "רשתות", "מערכות הפעלה", "הגנה ותקיפה", "כלים", "כללי"];
+        
+        let currentLang = 'he'; // ברירת מחדל
+        let currentFolder = "הכל";
+        let quizMode = false;
+        let notes = JSON.parse(localStorage.getItem('soc_offline_v9')) || [];
+
+        document.addEventListener('DOMContentLoaded', () => { 
+            updateInterface();
+            renderNotes(); 
+        });
+
+        function toggleLang() {
+            currentLang = currentLang === 'he' ? 'en' : 'he';
+            updateInterface();
+            renderNotes();
+        }
+
+        function updateInterface() {
+            const T = LANG[currentLang];
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = T.dir;
+            
+            document.getElementById('langBtn').innerText = T.flag;
+            document.querySelector('h2').innerText = T.appTitle;
+            document.getElementById('quizBtn').innerText = quizMode ? T.quizShow : T.quizHide;
+            
+            document.getElementById('lblAdd').innerText = T.addTitle;
+            document.getElementById('lblSelectFolder').innerText = T.selectFolder;
+            document.getElementById('titleIn').placeholder = T.placeholderTitle;
+            document.getElementById('textIn').placeholder = T.placeholderText;
+            document.getElementById('lblDictate').innerText = T.dictate;
+            document.getElementById('btnSave').innerText = T.save;
+            
+            document.getElementById('lblSettings').innerText = T.settings;
+            document.getElementById('btnImport').innerText = T.import;
+            document.getElementById('btnExport').innerText = T.export;
+            document.getElementById('btnDeleteAll').innerText = T.deleteAll;
+            document.getElementById('searchInput').placeholder = T.search;
+
+            // עדכון רשימת תיקיות (בחלונית הוספה ובתפריט עליון)
+            updateFolderNav();
+            updateFolderSelect();
+        }
+
+        function updateFolderNav() {
+            const nav = document.getElementById('folderNav');
+            nav.innerHTML = "";
+            const T = LANG[currentLang];
+            
+            FOLDER_KEYS.forEach(key => {
+                const btn = document.createElement('div');
+                btn.className = `folder-tab ${key === currentFolder ? 'active' : ''}`;
+                const iconId = ICONS_MAP[key] || "#icon-list";
+                // מציג את השם המתורגם, אבל הלוגיקה משתמשת ב-key המקורי
+                btn.innerHTML = `<svg class="icon"><use href="${iconId}"></use></svg> ${T.folders[key]}`;
+                btn.onclick = () => {
+                    currentFolder = key;
+                    document.querySelectorAll('.folder-tab').forEach(t => t.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderNotes();
+                };
+                nav.appendChild(btn);
+            });
+        }
+
+        function updateFolderSelect() {
+            const select = document.getElementById('folderSelect');
+            const savedValue = select.value;
+            select.innerHTML = "";
+            const T = LANG[currentLang];
+            
+            FOLDER_KEYS.forEach(key => {
+                if(key === "הכל") return;
+                const opt = document.createElement('option');
+                opt.value = key; // שומרים את הערך המקורי (עברית) כדי לא לשבור נתונים ישנים
+                opt.innerText = T.folders[key];
+                select.appendChild(opt);
+            });
+            if(savedValue) select.value = savedValue;
+        }
+
+        // --- דיבור לטקסט ---
+        function startDictation() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                // בחירת שפה לפי המצב הנוכחי
+                recognition.lang = currentLang === 'he' ? 'he-IL' : 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                const btn = document.getElementById('recBtn');
+                const status = document.getElementById('recStatus');
+                const T = LANG[currentLang];
+
+                recognition.onstart = function() {
+                    btn.classList.add('recording');
+                    status.innerText = T.recording;
+                    status.style.display = 'block';
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    const textArea = document.getElementById('textIn');
+                    textArea.value += (textArea.value ? " " : "") + transcript;
+                };
+
+                recognition.onerror = function() { stopRec(); };
+                recognition.onend = function() { stopRec(); };
+                recognition.start();
+
+                function stopRec() {
+                    btn.classList.remove('recording');
+                    status.style.display = 'none';
+                }
+            } else {
+                alert("Browser not supported.");
+            }
+        }
+
+        // --- הקראת טקסט ---
+        function speakText(text) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            // בחירת שפה להקראה
+            utterance.lang = currentLang === 'he' ? 'he-IL' : 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function addNote() {
+            const T = LANG[currentLang];
+            const folder = document.getElementById('folderSelect').value;
+            const title = document.getElementById('titleIn').value;
+            const text = document.getElementById('textIn').value;
+            if (!title) return alert(T.alertSave);
+            
+            notes.unshift({ id: Date.now(), folder, title, text, date: new Date().toLocaleDateString() });
+            save();
+            document.getElementById('titleIn').value = "";
+            document.getElementById('textIn').value = "";
+            document.querySelector('.add-box').removeAttribute('open');
+            renderNotes();
+        }
+
+        function editNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            
+            document.getElementById('folderSelect').value = note.folder;
+            document.getElementById('titleIn').value = note.title;
+            document.getElementById('textIn').value = note.text;
+            
+            notes = notes.filter(n => n.id !== id); // מחיקה זמנית
+            save();
+            renderNotes();
+            document.getElementById('addBox').setAttribute('open', 'true');
+            document.getElementById('addBox').scrollIntoView({behavior: "smooth"});
+        }
+
+        function deleteNote(id) { 
+            if (confirm(LANG[currentLang].confirmDel)) { 
+                notes = notes.filter(n => n.id !== id); save(); renderNotes(); 
+            } 
+        }
+        
+        function clearAll() { 
+            if(confirm(LANG[currentLang].confirmDelAll)) { notes = []; save(); renderNotes(); } 
+        }
+
+        function exportData() { navigator.clipboard.writeText(JSON.stringify(notes)); alert(LANG[currentLang].alertCopied); }
+        function importData() {
+            try {
+                const newNotes = JSON.parse(document.getElementById('importArea').value);
+                if (Array.isArray(newNotes)) { notes = [...newNotes, ...notes]; save(); alert(LANG[currentLang].alertImport); renderNotes(); }
+            } catch (e) { alert("Error"); }
+        }
+
+        function save() { localStorage.setItem('soc_offline_v9', JSON.stringify(notes)); }
+
+        function toggleQuizMode() {
+            quizMode = !quizMode;
+            updateInterface(); // עדכון טקסט הכפתור
+            renderNotes();
+        }
+
+        function renderNotes() {
+            const list = document.getElementById('notesList');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const T = LANG[currentLang];
+            list.innerHTML = "";
+            
+            notes.forEach(note => {
+                if (currentFolder !== "הכל" && note.folder !== currentFolder) return;
+                if (!note.title.toLowerCase().includes(search) && !note.text.toLowerCase().includes(search)) return;
+
+                const card = document.createElement('div');
+                card.className = "card";
+                const contentClass = quizMode ? "content hidden-answer" : "content";
+                const iconId = ICONS_MAP[note.folder] || "#icon-list";
+                
+                const safeTitle = esc(note.title);
+                const safeText = esc(note.text);
+                const speakableText = safeText.replace(/"/g, "'").replace(/\n/g, " ");
+                
+                // שם התיקייה לתצוגה (מתורגם)
+                const folderDisplay = T.folders[note.folder] || note.folder;
+
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div>
+                            <div class="card-title" dir="auto">${safeTitle}</div>
+                            <span class="card-meta"><svg class="icon"><use href="${iconId}"></use></svg> ${folderDisplay}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="${contentClass}" onclick="if(quizMode) this.classList.remove('hidden-answer')" dir="auto">
+                        ${safeText}
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="action-btn btn-speak" onclick="speakText('${speakableText}')">
+                            <svg class="icon"><use href="#icon-speak"></use></svg> ${T.btnSpeak}
+                        </button>
+                        <button class="action-btn btn-edit" onclick="editNote(${note.id})">
+                            <svg class="icon"><use href="#icon-edit"></use></svg> ${T.btnEdit}
+                        </button>
+                        <button class="action-btn btn-del" onclick="deleteNote(${note.id})">
+                            ${T.btnDel}
+                        </button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+        
+        function esc(str) { return str ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : ""; }
+    </script>
+</body>
+</html>
